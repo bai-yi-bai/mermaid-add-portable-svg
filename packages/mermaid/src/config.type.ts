@@ -264,6 +264,15 @@ export interface MermaidConfig {
    */
   htmlLabels?: boolean;
   /**
+   * Produce SVG that renders correctly without a browser engine, such as Batik or prawn-svg.
+   *
+   * Labels are written as SVG text unless `htmlLabels` is set. Computed styles are written
+   * as presentation attributes instead of a style sheet, text is positioned in px, gradient
+   * strokes become solid strokes, and the output is serialized as XML.
+   *
+   */
+  portableSvg?: boolean;
+  /**
    * Specifies the font to be used in the rendered diagrams.
    * Can be any possible CSS `font-family`.
    * See https://developer.mozilla.org/en-US/docs/Web/CSS/font-family

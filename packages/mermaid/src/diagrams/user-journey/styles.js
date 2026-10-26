@@ -21,6 +21,9 @@ const getStyles = (options) =>
   .label text {
     fill: #333;
   }
+  text.journey-section {
+    fill: ${options.textColor};
+  }
   .label {
     color: ${options.textColor}
   }

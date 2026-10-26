@@ -43,6 +43,7 @@ import type {
   RenderResult,
 } from './types.js';
 import { decodeEntities, getErrorMessage } from './utils.js';
+import { makePortable, toXml } from './rendering-util/portableSvg.js';
 import { toBase64 } from './utils/base64.js';
 import { sanitizeCss } from './utils/sanitizeDirective.js';
 
@@ -83,6 +84,11 @@ function processAndSetConfigs(text: string) {
   }
   configApi.setDiagramConfigScope(diagramType);
   configApi.addDirective(processed.config ?? {});
+  // Portable SVG writes labels as SVG text unless the diagram asks for HTML labels.
+  const { portableSvg, htmlLabels } = configApi.getConfig();
+  if (portableSvg && htmlLabels === undefined) {
+    configApi.addDirective({ htmlLabels: false });
+  }
   return processed;
 }
 
@@ -638,6 +644,10 @@ const renderDiagram = async function (
     // Clean up SVG code
     root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
+    if (config.portableSvg) {
+      makePortable(svgNode.node()!);
+    }
+
     // Fix for when the base tag is used
     let code: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
 
@@ -654,6 +664,10 @@ const renderDiagram = async function (
         ADD_ATTR: DOMPURIFY_ATTR,
         HTML_INTEGRATION_POINTS: { foreignobject: true },
       });
+    }
+
+    if (config.portableSvg && !isSandboxed) {
+      code = toXml(code);
     }
 
     attachFunctions();

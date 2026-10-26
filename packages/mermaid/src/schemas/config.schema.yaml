@@ -275,6 +275,15 @@ properties:
       Use this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence
       over any diagram-specific settings.
     type: boolean
+  portableSvg:
+    description: |
+      Produce SVG that renders correctly without a browser engine, such as Batik or prawn-svg.
+
+      Labels are written as SVG text unless `htmlLabels` is set. Computed styles are written
+      as presentation attributes instead of a style sheet, text is positioned in px, gradient
+      strokes become solid strokes, and the output is serialized as XML.
+    type: boolean
+    default: false
   fontFamily:
     description: |
       Specifies the font to be used in the rendered diagrams.

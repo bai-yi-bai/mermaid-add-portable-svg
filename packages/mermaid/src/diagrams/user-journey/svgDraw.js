@@ -1,5 +1,6 @@
 import { arc as d3arc } from 'd3';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
@@ -385,6 +386,12 @@ const _drawTextCandidateFunc = (function () {
   }
 
   return function (conf) {
+    // Portable SVG cannot use the foreignObject placement. Draw the SVG text that byFo
+    // already uses as its fallback, which takes its color from the theme, not sectionColours.
+    if (conf.textPlacement === 'fo' && getConfig().portableSvg) {
+      return (content, g, x, y, width, height, textAttrs, conf) =>
+        byTspan(content, g, x, y, width, height, textAttrs, conf);
+    }
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();

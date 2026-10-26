@@ -276,6 +276,28 @@ Or with no config object, and a jQuery selection:
 mermaid.init(undefined, $('#someId .yetAnotherClass'));
 ```
 
+## Portable SVG (v<MERMAID_RELEASE_VERSION>+)
+
+By default, mermaid's SVG output is meant to be shown in a browser. It uses HTML labels in `<foreignObject>`, a CSS style sheet, `hsl()` colors, and `em` lengths. SVG renderers without a browser engine, such as Batik, rsvg, resvg, CairoSVG, svglib, or prawn-svg, ignore or misread these, so they draw diagrams with missing text, black shapes, or misplaced labels.
+
+Set `portableSvg` to `true` to produce SVG that these renderers can draw:
+
+```javascript
+mermaid.initialize({
+  portableSvg: true,
+});
+```
+
+With `portableSvg` enabled:
+
+- Labels are SVG `<text>`, unless `htmlLabels` is set explicitly.
+- Every element's computed style is written as presentation attributes, and the `<style>` element is removed.
+- Text is positioned with explicit coordinates instead of `dominant-baseline` and `em` lengths.
+- Gradient strokes become solid strokes in the gradient's first color.
+- The output is serialized as XML.
+
+The styles are read from the browser after rendering, so `mermaid.render` must run in a browser or headless browser. Text measurement still depends on the renderer having the same fonts as the browser.
+
 ## Usage with webpack
 
 mermaid fully supports webpack. Here is a [working demo](https://github.com/mermaidjs/mermaid-webpack-demo).
